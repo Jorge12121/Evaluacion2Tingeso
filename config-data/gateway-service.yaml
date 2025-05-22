@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8080 # Asegúrate de que tu Gateway esté realmente en este puerto. Si lo ejecutas en 8081, cámbialo aquí.
 
 eureka:
   client:
@@ -16,14 +16,11 @@ spring:
       discovery:
         locator:
           enabled: true
-          # La opción `lower-case-service-id` es útil para estandarizar los IDs de servicio.
-          # Si tus IDs de servicio en Eureka no son exactamente en minúsculas, esto los convierte.
-          lower-case-service-id: true
       routes:
         # --- Ruta para ms-clientes ---
         - id: ms-clientes-route
-          uri: lb://MS-CLIENTES # 'lb://' indica Load Balancer, MS-CLIENTES es el ID de servicio en Eureka
+          uri: lb://MS-CLIENTES # Deja este en MAYÚSCULAS para que coincida con el registro por defecto de Eureka
           predicates:
-            - Path=/api/clientes/** # Cualquier solicitud que empiece con /api/clientes/ irá a ms-clientes
+            - Path=/api/clientes/**
           filters:
-            - RewritePath=/api/clientes/(?<segment>.*), /cliente/${segment} # Reescritura de la URL
+            - RewritePath=/api/clientes/(?<segment>.*), /cliente/${segment}
