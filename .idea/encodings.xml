@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/config-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/eureka-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gateway-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-admin/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-clientes/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-descuentos-frecuentes/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-descuentos-personas/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-reportes/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-reservas-comprobante/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-tarifas-duracion/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-tarifas-especiales/src/main/java" charset="UTF-8" />
+  </component>
+</project>

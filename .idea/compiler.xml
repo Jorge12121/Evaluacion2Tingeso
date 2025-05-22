@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="gateway-service" />
+        <module name="config-service" />
+      </profile>
+      <profile name="Annotation profile for ms-clientes" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath>
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="eureka-service" />
+        <module name="ms-clientes" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ms-admin" target="17" />
+      <module name="ms-descuentos-frecuentes" target="17" />
+      <module name="ms-descuentos-personas" target="17" />
+      <module name="ms-reportes" target="17" />
+      <module name="ms-reservas-comprobante" target="17" />
+      <module name="ms-tarifas-duracion" target="17" />
+      <module name="ms-tarifas-especiales" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="config-service" options="-parameters" />
+      <module name="eureka-service" options="-parameters" />
+      <module name="gateway-service" options="-parameters" />
+      <module name="ms-admin" options="-parameters" />
+      <module name="ms-clientes" options="-parameters" />
+      <module name="ms-descuentos-frecuentes" options="-parameters" />
+      <module name="ms-descuentos-personas" options="-parameters" />
+      <module name="ms-reportes" options="-parameters" />
+      <module name="ms-reservas-comprobante" options="-parameters" />
+      <module name="ms-tarifas-duracion" options="-parameters" />
+      <module name="ms-tarifas-especiales" options="-parameters" />
+    </option>
+  </component>
+</project>
