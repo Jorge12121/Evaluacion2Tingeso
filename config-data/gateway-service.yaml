@@ -28,3 +28,8 @@ spring:
           uri: lb://ms-tarifas-duracion
           predicates:
               - Path=/tarifas/**
+        #---------------------------------------
+        - id: ms-descuentos-personas
+          uri: lb://ms-descuentos-personas
+          predicates:
+              - Path=/descuentos-persona/**

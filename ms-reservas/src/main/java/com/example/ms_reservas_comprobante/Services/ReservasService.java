@@ -105,7 +105,7 @@ public class ReservasService {
         double tarifaBase = obtenerTarifaBase(idTarifa,numeroVueltas);
         double precioBase = cantidadPersonas * tarifaBase;
 
-        double descuentoPersonas =0; // AplicarDescuentoPersonas(precioBase, cantidadPersonas);
+        double descuentoPersonas =obtenerDescuentoPersona(precioBase, cantidadPersonas);
         double descuentoFrecuencia = calcularDescuentoFrecuencia(idCliente, tarifaBase);
         double descuentoCumpleanos = aplicarDescuentoCumpleanos(clienteReserva, hayOtroCumpleanero, tarifaBase, cantidadPersonas, fecha);
 
@@ -219,6 +219,15 @@ public class ReservasService {
 
     public double obtenerTarifaBase(int idTarifa, int cantidadVueltas){
         String url = "http://ms-tarifas-duracion/base/"+idTarifa+"/"+cantidadVueltas;
+        try {
+            return restTemplate().getForObject(url, double.class);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Cliente no encontrado.");
+        }
+    }
+
+    public double obtenerDescuentoPersona(double precioBase, int numeroPersonas){
+        String url = "http://ms-descuentos-persona/"+precioBase+"/"+numeroPersonas;
         try {
             return restTemplate().getForObject(url, double.class);
         } catch (Exception e) {

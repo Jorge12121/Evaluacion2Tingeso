@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ms-reservas
+    name: ms-descuentos-personas
   config:
     import: configserver:http://localhost:8888
   cloud:

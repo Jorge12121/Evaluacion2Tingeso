@@ -8,14 +8,14 @@
 
 
     @RestController
-    @RequestMapping("/reservas")
+    @RequestMapping("/descuentos-persona")
     @CrossOrigin
     public class DescuentosPersonasController {
 
         @Autowired
         private DescuentosPersonasService reservasService;
 
-        @GetMapping("/descuento-personas")
+        @GetMapping()
         public ResponseEntity<Double> getDescuentoPorPersonas(
                 @RequestParam double precioBase,
                 @RequestParam int numeroPersonas) {
