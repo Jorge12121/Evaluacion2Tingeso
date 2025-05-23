@@ -11,6 +11,7 @@
     import java.time.LocalDate;
     import java.time.LocalTime;
     import java.util.HashMap;
+    import java.util.List;
     import java.util.Map;
 
     @RestController
@@ -20,6 +21,15 @@
 
         @Autowired
         ReservasService reservasService;
+
+
+        @GetMapping()
+        public ResponseEntity<List<Reservas>> obtenerReservas(
+        ) {
+            List<Reservas> reservas = reservasService.getAllReservas();
+            return ResponseEntity.ok(reservas);
+        }
+
 
         @PostMapping("/{rut}")
         public ResponseEntity<Map<String, Object>> generarReserva(

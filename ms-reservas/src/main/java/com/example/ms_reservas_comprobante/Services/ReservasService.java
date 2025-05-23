@@ -234,4 +234,9 @@ public class ReservasService {
             throw new IllegalArgumentException("Cliente no encontrado.");
         }
     }
+
+    public List<Reservas> getAllReservas() {
+        return reservasRepository.findAll();
+    }
+
 }
