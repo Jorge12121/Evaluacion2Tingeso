@@ -43,3 +43,8 @@ spring:
           uri: lb://ms-descuentos-frecuentes
           predicates:
             - Path=/descuentos-frecuencia/**
+        #---------------------------------------
+        - id: ms-tarifas-especiales
+          uri: lb://ms-tarifas-especiales
+          predicates:
+            - Path=/tarifas-especiales/**
