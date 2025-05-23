@@ -125,11 +125,8 @@ public class ReservasService {
     }
 
     public double calcularDescuentoFrecuencia(Long idCliente, double precioBase) {
-        int visitas = obtenerVisitasDelMes(idCliente);
-        if (visitas >= 7) return precioBase * 0.3;
-        if (visitas >= 5) return precioBase * 0.2;
-        if (visitas >= 2) return precioBase * 0.1;
-        return 0;
+        String url = "http://ms-descuentos-frecuentes/descuentos-frecuencia?idCliente=" + idCliente + "&precioBase=" + precioBase;
+        return getFromService(url, Double.class, "Error al obtener descuento por frecuencia");
     }
 
 //    public double aplicarDescuentoCumpleanos(Cliente clienteReserva, boolean hayOtroCumpleanero,
