@@ -2,7 +2,6 @@ package com.example.ms_reservas_comprobante.Services;
 
 import com.example.ms_clientes.Entities.Cliente;
 import com.example.ms_reservas_comprobante.Entities.Reservas;
-import com.example.ms_reservas_comprobante.Config.RestTemplateConfig;
 import com.example.ms_reservas_comprobante.Repositories.ReservasRepository;
 import com.example.ms_tarifas_duracion.Entities.Tarifas;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ReservasService {
@@ -21,104 +19,79 @@ public class ReservasService {
     private ReservasRepository reservasRepository;
 
     @Autowired
-    private RestTemplateConfig restTemplateConfig;
+    private RestTemplate restTemplate;
 
-    private RestTemplate restTemplate() {
-        return restTemplateConfig.restTemplate();
+    // Método genérico para consumir otros servicios REST
+    private <T> T getFromService(String url, Class<T> responseType, String errorMsg) {
+        try {
+            return restTemplate.getForObject(url, responseType);
+        } catch (Exception e) {
+            throw new RuntimeException(errorMsg + ": " + e.getMessage(), e);
+        }
     }
 
-    // Obtener cliente desde ms-clientes por RUT
     private Cliente obtenerClientePorRut(String rut) {
         String url = "http://ms-clientes/cliente/rut/" + rut;
-        try {
-            return restTemplate().getForObject(url, Cliente.class);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Cliente no encontrado.");
-        }
-    }
-
-    // Verifica si el cliente está de cumpleaños en una fecha específica
-    private boolean esCumpleanero(Long idCliente, LocalDate fecha) {
-        String url = "http://ms-clientes/cliente/esCumpleanero?id=" + idCliente + "&fecha=" + fecha;
-        try {
-            return restTemplate().getForObject(url, Boolean.class);
-        } catch (Exception e) {
-            throw new RuntimeException("Error al verificar cumpleaños del cliente.");
-        }
-    }
-
-    // Obtiene el número de visitas del cliente en el mes actual
-    private int obtenerVisitasDelMes(Long idCliente) {
-        String url = "http://ms-clientes/cliente/visitas-del-mes/" + idCliente;
-        try {
-            return restTemplate().getForObject(url, Integer.class);
-        } catch (Exception e) {
-            throw new RuntimeException("Error al obtener visitas del cliente.");
-        }
+        return getFromService(url, Cliente.class, "Error al obtener cliente por RUT");
     }
 
 
-    public Reservas generarReserva(String rut, LocalDate fecha, LocalTime horaInicio, int cantidadPersonas, int numeroVueltas, boolean hayOtroCumpleanero) {
-        // 1. Validaciones de fecha
+
+    public int obtenerVisitasDelMes(Long idCliente) {
+        int visitas = reservasRepository.contarReservasDelMes(idCliente);
+        return visitas;
+    }
+
+    public Reservas generarReserva(String rut, LocalDate fecha, LocalTime horaInicio,
+                                   int cantidadPersonas, int numeroVueltas, boolean hayOtroCumpleanero) {
         LocalDate hoy = LocalDate.now();
+
         if (fecha.isBefore(hoy)) {
             throw new IllegalArgumentException("No se pueden generar reservas en fechas anteriores a hoy.");
         }
-
         if (fecha.isAfter(hoy.plusDays(30))) {
             throw new IllegalArgumentException("Solo se permiten reservas hasta 30 días desde hoy.");
         }
 
-        // 2. Validación de horario permitido
         LocalTime apertura;
         LocalTime cierre = LocalTime.of(22, 0);
 
         switch (fecha.getDayOfWeek()) {
-            case SATURDAY:
-            case SUNDAY:
-                apertura = LocalTime.of(10, 0);
-                break;
-            default:
-                apertura = LocalTime.of(14, 0);
-                break;
+            case SATURDAY, SUNDAY -> apertura = LocalTime.of(10, 0);
+            default -> apertura = LocalTime.of(14, 0);
         }
 
-        if (horaInicio.isBefore(apertura) || horaInicio.isAfter(cierre.minusMinutes(obtenerDuracion(numeroVueltas)))) {
+        int duracion = obtenerDuracion(numeroVueltas);
+
+        if (horaInicio.isBefore(apertura) || horaInicio.isAfter(cierre.minusMinutes(duracion))) {
             throw new IllegalArgumentException("La hora de inicio debe estar dentro del horario permitido.");
         }
 
-        // 3. Obtener cliente
         Cliente clienteReserva = obtenerClientePorRut(rut);
         if (clienteReserva == null) {
             throw new IllegalArgumentException("Cliente no encontrado.");
         }
         Long idCliente = clienteReserva.getId();
 
-        // 4. Obtener tarifa activa
         Tarifas tarifa = obtenerTarifaActiva();
         if (tarifa == null) {
             throw new IllegalArgumentException("No hay tarifa activa en este momento.");
         }
         int idTarifa = tarifa.getId();
 
-        // 5. Cálculo de precios y descuentos
-        double tarifaBase = obtenerTarifaBase(idTarifa,numeroVueltas);
+        double tarifaBase = obtenerTarifaBase(idTarifa, numeroVueltas);
         double precioBase = cantidadPersonas * tarifaBase;
 
-        double descuentoPersonas =obtenerDescuentoPersona(precioBase, cantidadPersonas);
+        double descuentoPersonas = obtenerDescuentoPersona(precioBase, cantidadPersonas);
         double descuentoFrecuencia = calcularDescuentoFrecuencia(idCliente, tarifaBase);
-        double descuentoCumpleanos = aplicarDescuentoCumpleanos(clienteReserva, hayOtroCumpleanero, tarifaBase, cantidadPersonas, fecha);
+        double descuentoCumpleanos =0; // aplicarDescuentoCumpleanos(clienteReserva, hayOtroCumpleanero, tarifaBase, cantidadPersonas, fecha);
 
         double precioTotalSinIVA = precioBase - descuentoPersonas - descuentoFrecuencia - descuentoCumpleanos;
         double IVA = precioTotalSinIVA * 0.19;
         double precioTotal = precioTotalSinIVA + IVA;
 
-        // 6. Cálculo de hora fin
-        int duracion = obtenerDuracion(numeroVueltas);
         LocalTime horaFin = horaInicio.plusMinutes(duracion);
 
-
-        // 7. Verificar cruces con otras reservas
         List<Reservas> reservasDelDia = reservasRepository.findByFecha(fecha);
         for (Reservas reservaExistente : reservasDelDia) {
             LocalTime inicioExistente = reservaExistente.getHoraInicio();
@@ -130,7 +103,6 @@ public class ReservasService {
             }
         }
 
-        // 8. Crear y guardar reserva
         Reservas nuevaReserva = new Reservas();
         nuevaReserva.setIdCliente(idCliente);
         nuevaReserva.setFecha(fecha);
@@ -154,27 +126,26 @@ public class ReservasService {
 
     public double calcularDescuentoFrecuencia(Long idCliente, double precioBase) {
         int visitas = obtenerVisitasDelMes(idCliente);
-
         if (visitas >= 7) return precioBase * 0.3;
         if (visitas >= 5) return precioBase * 0.2;
         if (visitas >= 2) return precioBase * 0.1;
         return 0;
     }
 
-    public double aplicarDescuentoCumpleanos(Cliente clienteReserva, boolean hayOtroCumpleanero, double precioBase, int tamanoGrupo, LocalDate fecha) {
-        boolean esCumpleanero = esCumpleanero(clienteReserva.getId(), fecha);
-        double descuentoTotal = 0;
-
-        if (esCumpleanero && (tamanoGrupo > 2)) {
-            descuentoTotal += precioBase * 0.5;
-
-            if (hayOtroCumpleanero && tamanoGrupo >= 6) {
-                descuentoTotal += precioBase * 0.5;
-            }
-        }
-
-        return descuentoTotal;
-    }
+//    public double aplicarDescuentoCumpleanos(Cliente clienteReserva, boolean hayOtroCumpleanero,
+//                                             double precioBase, int tamanoGrupo, LocalDate fecha) {
+//        boolean esCumpleanero = esCumpleanero(clienteReserva.getId(), fecha);
+//        double descuentoTotal = 0;
+//
+//        if (esCumpleanero && tamanoGrupo > 2) {
+//            descuentoTotal += precioBase * 0.5;
+//            if (hayOtroCumpleanero && tamanoGrupo >= 6) {
+//                descuentoTotal += precioBase * 0.5;
+//            }
+//        }
+//
+//        return descuentoTotal;
+//    }
 
     public List<Reservas> obtenerTodas() {
         return reservasRepository.findAll();
@@ -193,50 +164,33 @@ public class ReservasService {
     }
 
     public Reservas actualizarEstado(Integer id, String nuevoEstado) {
-        Reservas reserva = reservasRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+        Reservas reserva = reservasRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
         reserva.setEstado(nuevoEstado);
         return reservasRepository.save(reserva);
     }
 
-    public int obtenerDuracion(int numerovueltas){
-        String url = "http://ms-tarifas-duracion/duracion/" + numerovueltas;
-        try {
-            return restTemplate().getForObject(url, int.class);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Cliente no encontrado.");
-        }
-
+    public int obtenerDuracion(int numeroVueltas) {
+        String url = "http://ms-tarifas-duracion/tarifas/duracion?numerodevueltas=" + numeroVueltas;
+        return getFromService(url, Integer.class, "Error al obtener duración");
     }
 
-    public Tarifas obtenerTarifaActiva(){
-        String url = "http://ms-tarifas-duracion/activa/";
-        try {
-            return restTemplate().getForObject(url, Tarifas.class);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Cliente no encontrado.");
-        }
+    public Tarifas obtenerTarifaActiva() {
+        String url = "http://ms-tarifas-duracion/tarifas/activa";
+        return getFromService(url, Tarifas.class, "Error al obtener tarifa activa");
     }
 
-    public double obtenerTarifaBase(int idTarifa, int cantidadVueltas){
-        String url = "http://ms-tarifas-duracion/base/"+idTarifa+"/"+cantidadVueltas;
-        try {
-            return restTemplate().getForObject(url, double.class);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Cliente no encontrado.");
-        }
+    public double obtenerTarifaBase(int idTarifa, int cantidadVueltas) {
+        String url = "http://ms-tarifas-duracion/tarifas/base?idTarifa=" + idTarifa + "&numeroVueltas=" + cantidadVueltas;
+        return getFromService(url, Double.class, "Error al obtener tarifa base");
     }
 
-    public double obtenerDescuentoPersona(double precioBase, int numeroPersonas){
-        String url = "http://ms-descuentos-persona/"+precioBase+"/"+numeroPersonas;
-        try {
-            return restTemplate().getForObject(url, double.class);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Cliente no encontrado.");
-        }
+    public double obtenerDescuentoPersona(double precioBase, int numeroPersonas) {
+        String url = "http://ms-descuentos-personas/descuentos-persona?precioBase=" + precioBase + "&numeroPersonas=" + numeroPersonas;
+        return getFromService(url, Double.class, "Error al obtener descuento por persona");
     }
 
     public List<Reservas> getAllReservas() {
         return reservasRepository.findAll();
     }
-
 }

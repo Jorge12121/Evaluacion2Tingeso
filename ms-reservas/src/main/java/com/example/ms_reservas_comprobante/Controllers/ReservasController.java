@@ -32,7 +32,7 @@
 
 
         @PostMapping("/{rut}")
-        public ResponseEntity<Map<String, Object>> generarReserva(
+        public ResponseEntity<?> generarReserva(
                 @PathVariable String rut,
                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime horaInicio,
@@ -41,27 +41,28 @@
                 @RequestParam boolean hayOtroCumpleanero
         ) {
             try {
-                // Generar la reserva
-                Reservas nuevaReserva = reservasService.generarReserva(
-                        rut, fecha, horaInicio, cantidadPersonas,
-                        numeroVueltas, hayOtroCumpleanero
-                );
-
-                // Crear un mapa con los datos que quieres devolver
+                Reservas reserva = reservasService.generarReserva(rut, fecha, horaInicio, cantidadPersonas, numeroVueltas, hayOtroCumpleanero);
                 Map<String, Object> response = new HashMap<>();
-                response.put("id", nuevaReserva.getId());
-                response.put("precioTotal", nuevaReserva.getPrecio_total());
-                response.put("fecha", nuevaReserva.getFecha());
-                response.put("horaInicio", nuevaReserva.getHoraInicio());
-                response.put("cantidadPersonas", nuevaReserva.getCantidad_personas());
-                response.put("numeroVueltas", nuevaReserva.getNumero_vueltas());
-
-                // Devolver el mapa como respuesta
-                return ResponseEntity.ok(response);
+                response.put("mensaje", "Reserva generada con éxito");
+                response.put("reserva", reserva);
+                return new ResponseEntity<>(response, HttpStatus.CREATED);
             } catch (IllegalArgumentException e) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+                e.printStackTrace(); // Esto muestra la traza completa en consola
+                return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+        }
+
+
+        @GetMapping("/visitas-del-mes/{idCliente}")
+        public ResponseEntity<Integer> obtenerVisitasDelMes(@PathVariable Long idCliente) {
+            try {
+                int visitas = reservasService.obtenerVisitasDelMes(idCliente);
+                return ResponseEntity.ok(visitas);
+            } catch (Exception e) {
+                return ResponseEntity.ok(-1);
             }
         }
 

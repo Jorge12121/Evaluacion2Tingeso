@@ -117,18 +117,4 @@ public class ClienteController {
         }
     }
 
-    // 8. Endpoint para contar las reservas del mes de un cliente
-    // GET http://localhost:8080/cliente/{clienteId}/reservas-mes
-    @GetMapping("/{clienteId}/reservas-mes")
-    public ResponseEntity<Integer> contarReservasMes(@PathVariable Long clienteId) {
-        try {
-            Cliente cliente = clienteService.findById(clienteId); // Obtener el cliente primero
-            int reservasMes = clienteService.contarReservasMes(cliente);
-            return new ResponseEntity<>(reservasMes, HttpStatus.OK); // Código 200 OK
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Código 404 NOT_FOUND si el cliente no existe
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // Código 500 INTERNAL_SERVER_ERROR
-        }
-    }
 }

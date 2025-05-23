@@ -5,6 +5,7 @@ package com.example.ms_reservas_comprobante.Repositories;
 import com.example.ms_reservas_comprobante.Entities.Reservas;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -21,4 +22,9 @@ public interface ReservasRepository extends JpaRepository<Reservas, Integer> {
     List<Reservas> findByFecha(LocalDate fecha);
 
     List<Reservas> findByIdCliente(Long idCliente);
+
+    @Query(value = "SELECT COUNT(r) FROM Reservas r WHERE r.id_cliente = :clienteId " +
+            "AND EXTRACT(MONTH FROM r.fecha) = EXTRACT(MONTH FROM CURRENT_DATE) " +
+            "AND EXTRACT(YEAR FROM r.fecha) = EXTRACT(YEAR FROM CURRENT_DATE)", nativeQuery = true)
+    int contarReservasDelMes(@Param("clienteId") Long clienteId);
 }

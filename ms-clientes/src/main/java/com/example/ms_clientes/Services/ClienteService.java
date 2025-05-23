@@ -77,9 +77,5 @@ public class ClienteService {
     }
 
 
-    public int contarReservasMes(Cliente cliente) {
-        Long id = cliente.getId();
 
-        return clienteRepository.contarReservasDelMes(id);
-    }
 }
