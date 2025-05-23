@@ -10,23 +10,24 @@
         <module name="gateway-service" />
         <module name="config-service" />
       </profile>
-      <profile name="Annotation profile for ms-clientes" enabled="true">
+      <profile name="Annotation profile for ms-reservas-comprobante" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <processorPath>
+        <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
+        <module name="ms-reservas" />
         <module name="eureka-service" />
         <module name="ms-clientes" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="ms-admin" target="17" />
+      <module name="ms-clientes (1)" target="17" />
       <module name="ms-descuentos-frecuentes" target="17" />
       <module name="ms-descuentos-personas" target="17" />
       <module name="ms-reportes" target="17" />
-      <module name="ms-reservas-comprobante" target="17" />
       <module name="ms-tarifas-duracion" target="17" />
       <module name="ms-tarifas-especiales" target="17" />
     </bytecodeTargetLevel>
@@ -38,10 +39,11 @@
       <module name="gateway-service" options="-parameters" />
       <module name="ms-admin" options="-parameters" />
       <module name="ms-clientes" options="-parameters" />
+      <module name="ms-clientes (1)" options="-parameters" />
       <module name="ms-descuentos-frecuentes" options="-parameters" />
       <module name="ms-descuentos-personas" options="-parameters" />
       <module name="ms-reportes" options="-parameters" />
-      <module name="ms-reservas-comprobante" options="-parameters" />
+      <module name="ms-reservas" options="-parameters" />
       <module name="ms-tarifas-duracion" options="-parameters" />
       <module name="ms-tarifas-especiales" options="-parameters" />
     </option>

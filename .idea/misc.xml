@@ -8,13 +8,13 @@
         <option value="$PROJECT_DIR$/ms-descuentos-personas/pom.xml" />
         <option value="$PROJECT_DIR$/ms-descuentos-frecuentes/pom.xml" />
         <option value="$PROJECT_DIR$/ms-admin/pom.xml" />
-        <option value="$PROJECT_DIR$/ms-clientes/pom.xml" />
-        <option value="$PROJECT_DIR$/ms-reservas-comprobante/pom.xml" />
         <option value="$PROJECT_DIR$/ms-tarifas-especiales/pom.xml" />
         <option value="$PROJECT_DIR$/ms-reportes/pom.xml" />
         <option value="$PROJECT_DIR$/config-service/pom.xml" />
         <option value="$PROJECT_DIR$/eureka-service/pom.xml" />
         <option value="$PROJECT_DIR$/gateway-service/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-clientes/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-reservas-comprobante/pom.xml" />
       </list>
     </option>
   </component>

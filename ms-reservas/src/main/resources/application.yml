@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: ms-reservas-comprobante
+  config:
+    import: configserver:http://localhost:8888
+  cloud:
+    config:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update

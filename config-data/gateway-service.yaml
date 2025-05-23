@@ -19,8 +19,6 @@ spring:
       routes:
         # --- Ruta para ms-clientes ---
         - id: ms-clientes
-          uri: lb://ms-clientes # Deja este en MAYÚSCULAS para que coincida con el registro por defecto de Eureka
+          uri: lb://ms-clientes
           predicates:
             - Path=/cliente/**
-#          filters:
-#            - RewritePath=/api/clientes/(?<segment>.*), /cliente/${segment}
