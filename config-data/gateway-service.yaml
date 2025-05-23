@@ -48,3 +48,9 @@ spring:
           uri: lb://ms-tarifas-especiales
           predicates:
             - Path=/tarifas-especiales/**
+
+        #---------------------------------------
+        - id: ms-reportes
+          uri: lb://ms-reportes
+          predicates:
+            - Path=/reportes/**
