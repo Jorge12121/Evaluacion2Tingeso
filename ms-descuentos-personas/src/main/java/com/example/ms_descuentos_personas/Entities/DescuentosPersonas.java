@@ -18,7 +18,6 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 
-
 public class DescuentosPersonas {
     @Id
     int idReserva;
