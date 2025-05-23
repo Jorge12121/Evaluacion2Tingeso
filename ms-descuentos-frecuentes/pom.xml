@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>ms-reservas</artifactId>
+	<artifactId>ms-descuentos-frecuentes</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>ms-reservas-comprobante</name>
-	<description>ms-reservas-comprobante</description>
+	<name>ms-descuentos-frecuentes</name>
+	<description>ms-descuentos-frecuentes</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -48,6 +48,11 @@
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
@@ -61,18 +66,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.example</groupId>
-			<artifactId>ms-clientes</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.example</groupId>
-			<artifactId>ms-tarifas-duracion</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

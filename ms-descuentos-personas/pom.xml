@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>ms-reservas</artifactId>
+	<artifactId>ms-descuentos-personas</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>ms-reservas-comprobante</name>
-	<description>ms-reservas-comprobante</description>
+	<name>ms-descuentos-personas</name>
+	<description>ms-descuentos-personas</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -61,18 +61,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.example</groupId>
-			<artifactId>ms-clientes</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.example</groupId>
-			<artifactId>ms-tarifas-duracion</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

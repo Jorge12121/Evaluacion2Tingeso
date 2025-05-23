@@ -15,6 +15,7 @@
         <option value="$PROJECT_DIR$/gateway-service/pom.xml" />
         <option value="$PROJECT_DIR$/ms-clientes/pom.xml" />
         <option value="$PROJECT_DIR$/ms-reservas-comprobante/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-reservas/pom.xml" />
       </list>
     </option>
   </component>

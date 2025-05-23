@@ -19,4 +19,6 @@ public interface ReservasRepository extends JpaRepository<Reservas, Integer> {
     List<Reservas> findReservasByFechaAndEstado(LocalDate fechaInicio, LocalDate fechaFin);
 
     List<Reservas> findByFecha(LocalDate fecha);
+
+    List<Reservas> findByClienteId(Long clienteId);
 }
