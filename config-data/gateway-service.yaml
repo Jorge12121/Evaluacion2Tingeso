@@ -33,3 +33,8 @@ spring:
           uri: lb://ms-descuentos-personas
           predicates:
               - Path=/descuentos-persona/**
+        #--------------------------------------
+        - id: ms-reservas
+          uri: lb://ms-reservas
+          predicates:
+              - Path=/reservas/**

@@ -181,7 +181,7 @@ public class ReservasService {
     }
 
     public List<Reservas> obtenerPorClienteId(Long clienteId) {
-        return reservasRepository.findByClienteId(clienteId);
+        return reservasRepository.findByIdCliente(clienteId);
     }
 
     public Reservas obtenerPorId(Integer id) {

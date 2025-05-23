@@ -20,5 +20,5 @@ public interface ReservasRepository extends JpaRepository<Reservas, Integer> {
 
     List<Reservas> findByFecha(LocalDate fecha);
 
-    List<Reservas> findByClienteId(Long clienteId);
+    List<Reservas> findByIdCliente(Long idCliente);
 }
