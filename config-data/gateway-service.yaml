@@ -22,3 +22,9 @@ spring:
           uri: lb://ms-clientes
           predicates:
             - Path=/cliente/**
+
+        #----------------------------------------
+        - id: ms-tarifas-duracion
+          uri: lb://ms-tarifas-duracion
+          predicates:
+              - Path=/tarifas/**
