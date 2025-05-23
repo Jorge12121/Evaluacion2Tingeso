@@ -10,7 +10,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReservasService {
@@ -84,7 +86,7 @@ public class ReservasService {
 
         double descuentoPersonas = obtenerDescuentoPersona(precioBase, cantidadPersonas);
         double descuentoFrecuencia = calcularDescuentoFrecuencia(idCliente, tarifaBase);
-        double descuentoCumpleanos =0; // aplicarDescuentoCumpleanos(clienteReserva, hayOtroCumpleanero, tarifaBase, cantidadPersonas, fecha);
+        double descuentoCumpleanos = aplicarDescuentoCumpleanos(idCliente, hayOtroCumpleanero, tarifaBase, cantidadPersonas, fecha);
 
         double precioTotalSinIVA = precioBase - descuentoPersonas - descuentoFrecuencia - descuentoCumpleanos;
         double IVA = precioTotalSinIVA * 0.19;
@@ -129,20 +131,21 @@ public class ReservasService {
         return getFromService(url, Double.class, "Error al obtener descuento por frecuencia");
     }
 
-//    public double aplicarDescuentoCumpleanos(Cliente clienteReserva, boolean hayOtroCumpleanero,
-//                                             double precioBase, int tamanoGrupo, LocalDate fecha) {
-//        boolean esCumpleanero = esCumpleanero(clienteReserva.getId(), fecha);
-//        double descuentoTotal = 0;
-//
-//        if (esCumpleanero && tamanoGrupo > 2) {
-//            descuentoTotal += precioBase * 0.5;
-//            if (hayOtroCumpleanero && tamanoGrupo >= 6) {
-//                descuentoTotal += precioBase * 0.5;
-//            }
-//        }
-//
-//        return descuentoTotal;
-//    }
+    public double aplicarDescuentoCumpleanos(long idCliente, boolean hayOtroCumpleanero,
+                                             double precioBase, int tamanoGrupo, LocalDate fecha) {
+        String url = "http://ms-tarifas-especiales/tarifas-especiales/cumpleanos?idCliente={idCliente}&hayOtroCumpleanero={hayOtroCumpleanero}&precioBase={precioBase}&tamanoGrupo={tamanoGrupo}&fecha={fecha}";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("idCliente", idCliente);
+        params.put("hayOtroCumpleanero", hayOtroCumpleanero);
+        params.put("precioBase", precioBase);
+        params.put("tamanoGrupo", tamanoGrupo);
+        params.put("fecha", fecha.toString());
+
+        return restTemplate.getForObject(url, Double.class, params);
+
+    }
+
 
     public List<Reservas> obtenerTodas() {
         return reservasRepository.findAll();
@@ -190,4 +193,10 @@ public class ReservasService {
     public List<Reservas> getAllReservas() {
         return reservasRepository.findAll();
     }
+
+
+    public List<Reservas> obtenerReservasPagadasPorFecha(LocalDate fechaInicio, LocalDate fechaFin) {
+        return reservasRepository.findReservasByFechaAndEstado(fechaInicio, fechaFin);
+    }
+
 }

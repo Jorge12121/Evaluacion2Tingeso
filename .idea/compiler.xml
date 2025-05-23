@@ -25,12 +25,20 @@
         <module name="ms-tarifas-duracion" />
         <module name="ms-descuentos-frecuentes" />
       </profile>
+      <profile name="Annotation profile for ms-reportes" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="ms-reportes" />
+        <module name="ms-admin" />
+        <module name="ms-tarifas-especiales" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="ms-admin" target="17" />
       <module name="ms-clientes (1)" target="17" />
-      <module name="ms-reportes" target="17" />
-      <module name="ms-tarifas-especiales" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

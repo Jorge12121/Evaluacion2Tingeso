@@ -27,4 +27,5 @@ public interface ReservasRepository extends JpaRepository<Reservas, Integer> {
             "AND EXTRACT(MONTH FROM r.fecha) = EXTRACT(MONTH FROM CURRENT_DATE) " +
             "AND EXTRACT(YEAR FROM r.fecha) = EXTRACT(YEAR FROM CURRENT_DATE)", nativeQuery = true)
     int contarReservasDelMes(@Param("clienteId") Long clienteId);
+
 }

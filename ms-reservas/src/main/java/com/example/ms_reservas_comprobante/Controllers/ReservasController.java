@@ -66,4 +66,12 @@
             }
         }
 
+        @GetMapping("/pagadas")
+        public ResponseEntity<List<Reservas>> obtenerReservasPagadas(
+                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+            List<Reservas> reservas = reservasService.obtenerReservasPagadasPorFecha(fechaInicio, fechaFin);
+            return ResponseEntity.ok(reservas);
+        }
+
     }
