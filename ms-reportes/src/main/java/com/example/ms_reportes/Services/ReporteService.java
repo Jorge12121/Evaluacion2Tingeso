@@ -4,6 +4,9 @@ package com.example.ms_reportes.Services;
 import com.example.ms_clientes.Entities.Cliente;
 import com.example.ms_reservas_comprobante.Entities.Reservas;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,18 +21,30 @@ public class ReporteService {
     @Autowired
     private RestTemplate restTemplate;
 
-    // Método genérico para consumir otros servicios REST
-    private <T> T getFromService(String url, Class<T> responseType, String errorMsg) {
+    private <T> T getFromService(String url, ParameterizedTypeReference<T> responseType, String errorMsg) {
         try {
-            return restTemplate.getForObject(url, responseType);
+            // Usamos exchange para especificar el tipo genérico de la lista
+            ResponseEntity<T> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET, // O POST, PUT, etc. según la necesidad
+                    null,           // body (no body for GET)
+                    responseType    // Esto le dice a RestTemplate el tipo exacto
+            );
+            return response.getBody();
         } catch (Exception e) {
             throw new RuntimeException(errorMsg + ": " + e.getMessage(), e);
         }
     }
 
     private List<Reservas> obtenerReservasPagadas(LocalDate inicio, LocalDate fin) {
-        String url = "http://ms-reservas/reservas/pagadas?inicio=" + inicio.toString() + "&fin=" + fin.toString();
-        return getFromService(url, List.class, "Error al obtener cliente por RUT");
+        String url = "http://ms-reservas/reservas/pagadas?fechaInicio=" + inicio.toString() + "&fechaFin=" + fin.toString(); // Asegúrate del nombre correcto del microservicio
+
+        // ¡Este es el cambio clave!
+        // Le indicamos a RestTemplate que esperamos una List<Reservas>
+        ParameterizedTypeReference<List<Reservas>> typeRef = new ParameterizedTypeReference<List<Reservas>>() {};
+
+        // Llama al método genérico con el nuevo tipo de referencia
+        return getFromService(url, typeRef, "Error al obtener reservas pagadas");
     }
 
 

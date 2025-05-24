@@ -20,18 +20,18 @@
         </processorPath>
         <module name="ms-descuentos-personas" />
         <module name="eureka-service" />
-        <module name="ms-reservas" />
         <module name="ms-clientes" />
         <module name="ms-tarifas-duracion" />
         <module name="ms-descuentos-frecuentes" />
       </profile>
-      <profile name="Annotation profile for ms-reportes" enabled="true">
+      <profile name="Annotation profile for ms-reservas-comprobante" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
+        <processorPath>
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
+        <module name="ms-reservas" />
         <module name="ms-reportes" />
         <module name="ms-admin" />
         <module name="ms-tarifas-especiales" />

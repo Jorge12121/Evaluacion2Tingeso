@@ -4,15 +4,37 @@ import com.example.ms_clientes.Entities.Cliente;
 import com.example.ms_reservas_comprobante.Entities.Reservas;
 import com.example.ms_reservas_comprobante.Repositories.ReservasRepository;
 import com.example.ms_tarifas_duracion.Entities.Tarifas;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamSource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+
+
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.TextAlignment;
+import jakarta.mail.MessagingException;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 
 @Service
 public class ReservasService {
@@ -22,6 +44,9 @@ public class ReservasService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     // Método genérico para consumir otros servicios REST
     private <T> T getFromService(String url, Class<T> responseType, String errorMsg) {
@@ -35,6 +60,11 @@ public class ReservasService {
     private Cliente obtenerClientePorRut(String rut) {
         String url = "http://ms-clientes/cliente/rut/" + rut;
         return getFromService(url, Cliente.class, "Error al obtener cliente por RUT");
+    }
+
+    private Cliente obtenerClientePorId(long id) {
+        String url = "http://ms-clientes/cliente/" + id;
+        return getFromService(url, Cliente.class, "Error al obtener cliente por ID");
     }
 
 
@@ -197,6 +227,154 @@ public class ReservasService {
 
     public List<Reservas> obtenerReservasPagadasPorFecha(LocalDate fechaInicio, LocalDate fechaFin) {
         return reservasRepository.findReservasByFechaAndEstado(fechaInicio, fechaFin);
+    }
+
+
+
+
+
+    public byte[] generarComprobanteExcel(int idReserva) throws IOException {
+        Reservas reserva = reservasRepository.findById(idReserva)
+                .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Comprobante de Pago");
+
+        // Cabecera, eliminamos las columnas no necesarias
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {
+                "Nombre Cliente", "Tarifa Base", "Descuento Grupo", "Descuento Frecuencia",
+                "Descuento Cumpleaños", "Monto Final", "IVA", "Monto Total"
+        };
+
+        for (int i = 0; i < headers.length; i++) {
+            org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(getHeaderStyle(workbook));
+        }
+
+// Obtener valores divididos por persona
+        int numPersonas = reserva.getCantidad_personas();
+        double precioBasePorPersona = reserva.getPrecio_base() / numPersonas;
+        double descuentoGrupoPorPersona = reserva.getDescuento_persona() / numPersonas;
+        double descuentoFrecuenciaPorPersona = reserva.getDescuento_frecuencia() / numPersonas;
+        double descuentoCumplePorPersona = reserva.getDescuento_cumpleaños() / numPersonas;
+        double montoFinalPorPersona = reserva.getPrecio_total_sinIVA() / numPersonas;
+        double ivaPorPersona = reserva.getIVA() / numPersonas;
+        double totalPorPersona = reserva.getPrecio_total() / numPersonas;
+
+        for (int i = 0; i < numPersonas; i++) {
+            Row row = sheet.createRow(i + 1); // Cada persona tiene su fila
+            row.createCell(0).setCellValue("Participante " + (i + 1)); // Opcional
+            row.createCell(1).setCellValue(precioBasePorPersona);
+            row.createCell(2).setCellValue(descuentoGrupoPorPersona);
+            row.createCell(3).setCellValue(descuentoFrecuenciaPorPersona);
+            row.createCell(4).setCellValue(descuentoCumplePorPersona);
+            row.createCell(5).setCellValue(montoFinalPorPersona);
+            row.createCell(6).setCellValue(ivaPorPersona);
+            row.createCell(7).setCellValue(totalPorPersona);
+        }
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+        return outputStream.toByteArray();
+    }
+
+    private CellStyle getHeaderStyle(Workbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        style.setFont(font);
+        return style;
+    }
+
+    public byte[] generarComprobantePDFDesdeExcel(int idReserva) throws IOException {
+        byte[] excelData = generarComprobanteExcel(idReserva);
+        Workbook workbook = new XSSFWorkbook(new ByteArrayInputStream(excelData));
+        Sheet sheet = workbook.getSheetAt(0);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+        Reservas reserva = reservasRepository.findById(idReserva)
+                .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+
+        Cliente clienteOpt = obtenerClientePorId(reserva.getIdCliente());
+        String nombreCliente = clienteOpt.getNombre();
+        document.add(new Paragraph("Comprobante de Pago - Kartódromo")
+                .setBold().setFontSize(18).setTextAlignment(TextAlignment.CENTER));
+
+        document.add(new Paragraph("Código de la reserva: " + idReserva)
+                .setTextAlignment(TextAlignment.CENTER).setMarginBottom(20));
+        document.add(new Paragraph("Generador de reserva: " + nombreCliente)
+                .setTextAlignment(TextAlignment.CENTER).setMarginBottom(20));
+        document.add(new Paragraph("Fecha y hora : " + reserva.getFecha() + "  " + reserva.getHoraInicio() )
+                .setTextAlignment(TextAlignment.CENTER).setMarginBottom(20));
+        document.add(new Paragraph("Vueltas/Tiempo : " + reserva.getNumero_vueltas() )
+                .setTextAlignment(TextAlignment.CENTER).setMarginBottom(20));
+        document.add(new Paragraph("Cantidad de personas : " + reserva.getCantidad_personas() )
+                .setTextAlignment(TextAlignment.CENTER).setMarginBottom(20));
+
+        Row headerRow = sheet.getRow(0);
+        if (headerRow == null) throw new IllegalStateException("Excel sin cabeceras");
+
+        int numCols = headerRow.getLastCellNum();
+        Table table = new Table(numCols).useAllAvailableWidth();
+
+        for (int i = 0; i < numCols; i++) {
+            String header = headerRow.getCell(i).getStringCellValue();
+            table.addHeaderCell(new com.itextpdf.layout.element.Cell().add(new Paragraph(header).setBold()));
+        }
+
+        // Agregar los datos por persona
+        for (int rowIdx = 1; rowIdx <= sheet.getLastRowNum(); rowIdx++) {
+            Row dataRow = sheet.getRow(rowIdx);
+            if (dataRow != null) {
+                for (int colIdx = 0; colIdx < numCols; colIdx++) {
+                    org.apache.poi.ss.usermodel.Cell cell = dataRow.getCell(colIdx);
+                    String value = "";
+                    if (cell != null) {
+                        switch (cell.getCellType()) {
+                            case STRING -> value = cell.getStringCellValue();
+                            case NUMERIC -> value = String.format("%.2f", cell.getNumericCellValue());
+                            case BOOLEAN -> value = Boolean.toString(cell.getBooleanCellValue());
+                            default -> value = "";
+                        }
+                    }
+                    table.addCell(new com.itextpdf.layout.element.Cell().add(new Paragraph(value)));
+                }
+            }
+        }
+
+        document.add(table);
+        document.add(new Paragraph("\nGracias por su preferencia.")
+                .setTextAlignment(TextAlignment.CENTER).setMarginTop(20));
+
+        document.close();
+        return baos.toByteArray();
+    }
+
+
+    public void enviarComprobanteCorreoCliente(int idReserva, byte[] archivoPDF) throws MessagingException {
+        Reservas reserva = reservasRepository.findById(idReserva)
+                .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada"));
+
+        Cliente cliente = obtenerClientePorId(reserva.getIdCliente());
+        String correo = cliente.getCorreo();
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setTo(correo);
+        helper.setSubject("Comprobante de Pago - Karting");
+        helper.setText("Adjunto se encuentra su comprobante de pago.");
+
+        InputStreamSource attachment = new ByteArrayResource(archivoPDF);
+        helper.addAttachment("ComprobantePago.pdf", attachment);
+
+        mailSender.send(message);
     }
 
 }
