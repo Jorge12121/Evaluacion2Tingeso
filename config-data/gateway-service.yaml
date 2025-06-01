@@ -54,3 +54,8 @@ spring:
           uri: lb://ms-reportes
           predicates:
             - Path=/reportes/**
+        #---------------------------------------
+        - id: ms-admin
+          uri: lb://ms-admin
+          predicates:
+            - Path=/administrador/**
