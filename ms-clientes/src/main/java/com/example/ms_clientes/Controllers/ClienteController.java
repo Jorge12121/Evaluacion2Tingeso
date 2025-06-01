@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cliente") // La URL base para todos los endpoints de clientes
-@CrossOrigin // Habilita CORS si tu frontend está en un dominio diferente
+@CrossOrigin
 public class ClienteController {
 
     @Autowired
