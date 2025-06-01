@@ -2,12 +2,14 @@
 
     import com.example.ms_reservas_comprobante.Entities.Reservas;
     import com.example.ms_reservas_comprobante.Services.ReservasService;
+    import jakarta.mail.MessagingException;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.format.annotation.DateTimeFormat;
     import org.springframework.http.HttpStatus;
     import org.springframework.http.ResponseEntity;
     import org.springframework.web.bind.annotation.*;
 
+    import java.io.IOException;
     import java.time.LocalDate;
     import java.time.LocalTime;
     import java.util.HashMap;
@@ -72,6 +74,19 @@
                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
             List<Reservas> reservas = reservasService.obtenerReservasPagadasPorFecha(fechaInicio, fechaFin);
             return ResponseEntity.ok(reservas);
+        }
+
+
+        @PostMapping("/generar/{idReserva}")
+        public ResponseEntity<String> generarYEnviarComprobante(@PathVariable int idReserva) {
+            try {
+                byte[] archivo = reservasService.generarComprobantePDFDesdeExcel(idReserva);
+                reservasService.enviarComprobanteCorreoCliente(idReserva, archivo);
+                return ResponseEntity.ok("Comprobante PDF enviado exitosamente.");
+            } catch (IOException | MessagingException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Error al generar o enviar el comprobante: " + e.getMessage());
+            }
         }
 
     }

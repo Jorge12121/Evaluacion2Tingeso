@@ -33,8 +33,16 @@
         </processorPath>
         <module name="ms-reservas" />
         <module name="ms-reportes" />
-        <module name="ms-admin" />
         <module name="ms-tarifas-especiales" />
+      </profile>
+      <profile name="Annotation profile for ms-admin" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="ms-admin" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
