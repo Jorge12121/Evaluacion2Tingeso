@@ -1,51 +1,62 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: admin-service-deployment
+  name: ms-clientes-deployment
   labels:
-    app: admin-service
+    app: ms-clientes-deployment
 spec:
-  replicas: 1
   selector:
     matchLabels:
-      app: admin-service
+      app: ms-clientes-deployment
+  replicas: 1
   template:
     metadata:
       labels:
-        app: admin-service
+        app: ms-clientes-deployment
     spec:
       containers:
-        - name: admin-service
-          image: jorge370/admin-service:latest
+        - name: ms-clientes
+          image: jorge370/ms-clientes:latest
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
           env:
             - name: SERVER_PORT
-              value: "8080"
-            - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://postgres-admin-service:5432/Admin
-            - name: SPRING_DATASOURCE_USERNAME
+              value: "0"
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_HOST_CLIENTES
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_PORT_CLIENTES
+            - name: DB_DBNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_DBNAME_CLIENTES
+            - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: postgres-admin-secret
-                  key: POSTGRES_USER
-            - name: SPRING_DATASOURCE_PASSWORD
+                  name: postgres-credentials
+                  key: DB_USER_CLIENTES
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-admin-secret
-                  key: POSTGRES_PASSWORD
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              value: http://eureka-server-service:8761/eureka
+                  name: postgres-credentials
+                  key: DB_PASSWORD_CLIENTES
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: admin-service
+  name: ms-clientes-service
 spec:
   selector:
-    app: admin-service
+    app: ms-clientes-deployment
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
-  type: LoadBalancer
+      port: 8081
+      targetPort: 8081
+  type: ClusterIP

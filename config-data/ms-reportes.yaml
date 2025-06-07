@@ -2,14 +2,14 @@ server:
   port: ${PORT:${SERVER_PORT:0}}
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/Reporte
-    username: postgres
-    password: "0370"
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DBNAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
   eureka:
     instance:
-      hostname: localhost
+      preferIpAddress: true
     client:
       fetch-registry: true
       register-with-eureka: true
       service-url:
-        default-zone: http://localhost:8761/eureka
+        default-zone: http://eureka-server-service:8761/eureka/
