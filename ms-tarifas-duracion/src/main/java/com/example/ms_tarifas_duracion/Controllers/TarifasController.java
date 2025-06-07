@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/tarifas")
-@CrossOrigin
 
 public class TarifasController {
 

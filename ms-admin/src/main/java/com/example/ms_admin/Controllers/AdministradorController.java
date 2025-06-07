@@ -1,6 +1,7 @@
 package com.example.ms_admin.Controllers;
 
 
+import com.example.ms_admin.Entities.Administrador;
 import com.example.ms_admin.Services.AdministradorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/administrador")
-@CrossOrigin
 public class AdministradorController {
 
     @Autowired
@@ -23,5 +23,11 @@ public class AdministradorController {
         } else {
             return ResponseEntity.status(404).body("Administrador no encontrado");
         }
+    }
+
+    @PostMapping
+    public ResponseEntity<String> guardarAdministrador(@RequestBody Administrador administrador) {
+        administradorService.crearAdministrador(administrador);
+        return ResponseEntity.ok("Administrador creado");
     }
 }

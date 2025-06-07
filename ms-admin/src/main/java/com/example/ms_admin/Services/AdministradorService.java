@@ -16,6 +16,9 @@ public class AdministradorService {
         Optional<Administrador> administrador = administradorRepository.findByRut(rut);
         return administrador.isPresent();
     }
+    public Administrador crearAdministrador(Administrador administrador) {
+        return administradorRepository.save(administrador);
+    }
 
 
 }

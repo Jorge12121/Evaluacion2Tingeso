@@ -9,7 +9,6 @@
 
     @RestController
     @RequestMapping("/tarifas-especiales")
-    @CrossOrigin
     public class TarifasEspecialesController {
 
         @Autowired

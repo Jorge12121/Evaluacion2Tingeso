@@ -18,7 +18,6 @@
 
     @RestController
     @RequestMapping("/reservas")
-    @CrossOrigin
     public class ReservasController {
 
         @Autowired
@@ -34,7 +33,7 @@
 
 
         @PostMapping("/{rut}")
-        public ResponseEntity<?> generarReserva(
+        public ResponseEntity<Map<String, Object>> generarReserva(
                 @PathVariable String rut,
                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime horaInicio,
@@ -43,18 +42,28 @@
                 @RequestParam boolean hayOtroCumpleanero
         ) {
             try {
-                Reservas reserva = reservasService.generarReserva(rut, fecha, horaInicio, cantidadPersonas, numeroVueltas, hayOtroCumpleanero);
-                Map<String, Object> response = new HashMap<>();
-                response.put("mensaje", "Reserva generada con éxito");
-                response.put("reserva", reserva);
-                return new ResponseEntity<>(response, HttpStatus.CREATED);
-            } catch (IllegalArgumentException e) {
-                return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
-            } catch (Exception e) {
-                e.printStackTrace(); // Esto muestra la traza completa en consola
-                return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+                // Generar la reserva
+                Reservas nuevaReserva = reservasService.generarReserva(
+                        rut, fecha, horaInicio, cantidadPersonas,
+                        numeroVueltas, hayOtroCumpleanero
+                );
 
+                // Crear un mapa con los datos que quieres devolver
+                Map<String, Object> response = new HashMap<>();
+                response.put("id", nuevaReserva.getId());
+                response.put("precioTotal", nuevaReserva.getPrecio_total());
+                response.put("fecha", nuevaReserva.getFecha());
+                response.put("horaInicio", nuevaReserva.getHoraInicio());
+                response.put("cantidadPersonas", nuevaReserva.getCantidad_personas());
+                response.put("numeroVueltas", nuevaReserva.getNumero_vueltas());
+
+                // Devolver el mapa como respuesta
+                return ResponseEntity.ok(response);
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
         }
 
 

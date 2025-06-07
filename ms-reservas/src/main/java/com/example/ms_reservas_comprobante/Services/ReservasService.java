@@ -1,9 +1,11 @@
 package com.example.ms_reservas_comprobante.Services;
 
-import com.example.ms_clientes.Entities.Cliente;
+
 import com.example.ms_reservas_comprobante.Entities.Reservas;
+import com.example.ms_reservas_comprobante.Models.Cliente;
+import com.example.ms_reservas_comprobante.Models.Tarifas;
 import com.example.ms_reservas_comprobante.Repositories.ReservasRepository;
-import com.example.ms_tarifas_duracion.Entities.Tarifas;
+
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;

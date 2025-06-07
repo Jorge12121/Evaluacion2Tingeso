@@ -15,26 +15,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cliente") // La URL base para todos los endpoints de clientes
-@CrossOrigin
 public class ClienteController {
 
     @Autowired
     private ClienteService clienteService;
 
-    // 1. Endpoint para crear un nuevo cliente (método POST)
-    // POST http://localhost:8080/cliente
     @PostMapping
-    public ResponseEntity<Cliente> crearCliente(@RequestBody Cliente cliente) {
-        try {
-            Cliente nuevoCliente = clienteService.crearCliente(cliente);
-            return new ResponseEntity<>(nuevoCliente, HttpStatus.CREATED); // Código 201 CREATED
-        } catch (ResponseStatusException e) {
-            // Captura la excepción de RUT existente del servicio
-            return new ResponseEntity<>(null, e.getStatusCode()); // Devuelve 400 BAD_REQUEST
-        } catch (Exception e) {
-            // Manejo genérico para cualquier otra excepción
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR); // Código 500 INTERNAL_SERVER_ERROR
-        }
+    public Cliente crearCliente(@RequestBody Cliente cliente) {
+        return clienteService.crearCliente(cliente);
     }
 
     // 2. Endpoint para obtener todos los clientes (método GET)
@@ -80,9 +68,14 @@ public class ClienteController {
     // GET http://localhost:8080/cliente/existe/{rut}
     // Tu implementación actual es buena, pero podemos devolver un boolean directamente en el cuerpo.
     @GetMapping("/existe/{rut}")
-    public ResponseEntity<Boolean> verificarClienteExistente(@PathVariable String rut) {
+    public ResponseEntity<String> verificarCliente(@PathVariable String rut) {
         boolean existe = clienteService.verificarClienteExistente(rut);
-        return new ResponseEntity<>(existe, HttpStatus.OK); // Código 200 OK, true/false en el cuerpo
+
+        if (existe) {
+            return ResponseEntity.ok("Cliente encontrado");
+        } else {
+            return ResponseEntity.status(404).body("Cliente no encontrado");
+        }
     }
 
     // 6. Endpoint para eliminar un cliente por ID (método DELETE)

@@ -1,8 +1,7 @@
 package com.example.ms_reportes.Services;
 
 
-import com.example.ms_clientes.Entities.Cliente;
-import com.example.ms_reservas_comprobante.Entities.Reservas;
+import com.example.ms_reportes.Models.Reservas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;

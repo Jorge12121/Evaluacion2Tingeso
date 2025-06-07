@@ -9,7 +9,6 @@
 
     @RestController
     @RequestMapping("/descuentos-persona")
-    @CrossOrigin
     public class DescuentosPersonasController {
 
         @Autowired
