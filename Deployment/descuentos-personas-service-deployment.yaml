@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-descuentos-personas-deployment
+  labels:
+    app: ms-descuentos-personas-deployment
+spec:
+  selector:
+    matchLabels:
+      app: ms-descuentos-personas-deployment
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ms-descuentos-personas-deployment
+    spec:
+      containers:
+        - name: ms-descuentos-personas
+          image: jorge370/ms-descuentos-personas:latest
+          ports:
+            - containerPort: 8094
+          env:
+            - name: SERVER_PORT
+              value: "0"
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_HOST_DESCUENTOS_PERSONAS
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_PORT_DESCUENTOS_PERSONAS
+            - name: DB_DBNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_DBNAME_DESCUENTOS_PERSONAS
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_USER_DESCUENTOS_PERSONAS
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_PASSWORD_DESCUENTOS_PERSONAS

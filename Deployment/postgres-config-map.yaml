@@ -16,24 +16,24 @@ data:
 
   DB_HOST_DESCUENTOS_FRECUENTES: postgres-descuentos-frecuentes
   DB_PORT_DESCUENTOS_FRECUENTES: "5432"
-  DB_DBNAME_DESCUENTOS_FRECUENTES: DescuentosFrecuentes
+  DB_DBNAME_DESCUENTOS_FRECUENTES: descuentosfrecuentes
 
   DB_HOST_DESCUENTOS_PERSONAS: postgres-descuentos-personas
   DB_PORT_DESCUENTOS_PERSONAS: "5432"
-  DB_DBNAME_DESCUENTOS_PERSONAS: DescuentosPersonas
+  DB_DBNAME_DESCUENTOS_PERSONAS: descuentospersonas
 
   DB_HOST_REPORTES: postgres-reportes
   DB_PORT_REPORTES: "5432"
-  DB_DBNAME_REPORTES: Reportes
+  DB_DBNAME_REPORTES: reportes
 
   DB_HOST_RESERVAS: postgres-reservas
   DB_PORT_RESERVAS: "5432"
-  DB_DBNAME_RESERVAS: Reservas
+  DB_DBNAME_RESERVAS: reservas
 
   DB_HOST_TARIFAS_DURACION: postgres-tarifas-duracion
   DB_PORT_TARIFAS_DURACION: "5432"
-  DB_DBNAME_TARIFAS_DURACION: TarifasDuracion
+  DB_DBNAME_TARIFAS_DURACION: tarifasduracion
 
   DB_HOST_TARIFAS_ESPECIALES: postgres-tarifas-especiales
   DB_PORT_TARIFAS_ESPECIALES: "5432"
-  DB_DBNAME_TARIFAS_ESPECIALES: TarifasEspeciales
+  DB_DBNAME_TARIFAS_ESPECIALES: tarifasespeciales

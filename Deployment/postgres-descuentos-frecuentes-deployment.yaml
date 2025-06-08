@@ -1,0 +1,90 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: descuentos-frecuentes-db-pv
+  labels:
+    type: local
+spec:
+  storageClassName: standard
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/descuentos-frecuentes-db-data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: descuentos-frecuentes-db-pvc
+  labels:
+    app: postgres
+    tier: database
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: descuentos-frecuentes-db-deployment
+  labels:
+    app: descuentos-frecuentes-db-deployment
+    tier: database
+spec:
+  selector:
+    matchLabels:
+      app: descuentos-frecuentes-db-deployment
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: descuentos-frecuentes-db-deployment
+        tier: database
+    spec:
+      containers:
+        - name: descuentos-frecuentes-db
+          image: postgres
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_USER_DESCUENTOS_FRECUENTES
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_PASSWORD_DESCUENTOS_FRECUENTES
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: descuentos-frecuentes-db-data
+      volumes:
+        - name: descuentos-frecuentes-db-data
+          persistentVolumeClaim:
+            claimName: descuentos-frecuentes-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-descuentos-frecuentes
+  labels:
+    app: postgres-descuentos-frecuentes
+    tier: database
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+  selector:
+    app: descuentos-frecuentes-db-deployment
+    tier: database
+  type: LoadBalancer
