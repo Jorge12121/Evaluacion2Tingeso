@@ -12,7 +12,7 @@ data:
 
   DB_HOST_CLIENTES: postgres-clientes
   DB_PORT_CLIENTES: "5432"
-  DB_DBNAME_CLIENTES: Clientes
+  DB_DBNAME_CLIENTES: clientes
 
   DB_HOST_DESCUENTOS_FRECUENTES: postgres-descuentos-frecuentes
   DB_PORT_DESCUENTOS_FRECUENTES: "5432"
