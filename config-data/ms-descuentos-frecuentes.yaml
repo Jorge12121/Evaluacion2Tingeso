@@ -1,11 +1,13 @@
 server:
-  port: ${PORT:${SERVER_PORT:0}}
+  port: ${SERVER_PORT}
 spring:
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DBNAME}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
 eureka:
+  instance:
+    preferIpAddress: true
   client:
     fetch-registry: true
     register-with-eureka: true
