@@ -6,34 +6,34 @@ metadata:
   labels:
     app: postgres-config
 data:
-  DB_HOST_ADMIN: postgres-admin-service
+  DB_HOST_ADMIN: postgres-admin
   DB_PORT_ADMIN: "5432"
-  DB_DBNAME_ADMIN: Admin
+  DB_DBNAME_ADMIN: admin
 
-  DB_HOST_CLIENTES: postgres-clientes-service
+  DB_HOST_CLIENTES: postgres-clientes
   DB_PORT_CLIENTES: "5432"
   DB_DBNAME_CLIENTES: Clientes
 
-  DB_HOST_DESCUENTOS_FRECUENTES: postgres-descuentos-frecuentes-service
+  DB_HOST_DESCUENTOS_FRECUENTES: postgres-descuentos-frecuentes
   DB_PORT_DESCUENTOS_FRECUENTES: "5432"
   DB_DBNAME_DESCUENTOS_FRECUENTES: DescuentosFrecuentes
 
-  DB_HOST_DESCUENTOS_PERSONAS: postgres-descuentos-personas-service
+  DB_HOST_DESCUENTOS_PERSONAS: postgres-descuentos-personas
   DB_PORT_DESCUENTOS_PERSONAS: "5432"
   DB_DBNAME_DESCUENTOS_PERSONAS: DescuentosPersonas
 
-  DB_HOST_REPORTES: postgres-reportes-service
+  DB_HOST_REPORTES: postgres-reportes
   DB_PORT_REPORTES: "5432"
   DB_DBNAME_REPORTES: Reportes
 
-  DB_HOST_RESERVAS: postgres-reservas-service
+  DB_HOST_RESERVAS: postgres-reservas
   DB_PORT_RESERVAS: "5432"
   DB_DBNAME_RESERVAS: Reservas
 
-  DB_HOST_TARIFAS_DURACION: postgres-tarifas-duracion-service
+  DB_HOST_TARIFAS_DURACION: postgres-tarifas-duracion
   DB_PORT_TARIFAS_DURACION: "5432"
   DB_DBNAME_TARIFAS_DURACION: TarifasDuracion
 
-  DB_HOST_TARIFAS_ESPECIALES: postgres-tarifas-especiales-service
+  DB_HOST_TARIFAS_ESPECIALES: postgres-tarifas-especiales
   DB_PORT_TARIFAS_ESPECIALES: "5432"
   DB_DBNAME_TARIFAS_ESPECIALES: TarifasEspeciales

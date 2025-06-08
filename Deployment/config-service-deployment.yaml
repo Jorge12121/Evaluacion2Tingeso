@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: config-service
-          image: jorge370/config-service:latest
+          image: jorge370/config-service
           ports:
             - containerPort: 8888
 ---

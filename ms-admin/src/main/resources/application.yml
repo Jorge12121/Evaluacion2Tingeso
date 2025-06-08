@@ -2,7 +2,7 @@ spring:
   application:
     name: ms-admin
   config:
-    import: configserver:http://localhost:8888
+    import: configserver:http://config-service:8888
   cloud:
     config:
       enabled: true
