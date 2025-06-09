@@ -5,6 +5,18 @@ spring:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DBNAME}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: jorgemunoz0371@gmail.com
+    password: cesxodobtuogdyxb
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 eureka:
   instance:
     preferIpAddress: true
