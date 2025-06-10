@@ -89,6 +89,7 @@
         @PostMapping("/generar/{idReserva}")
         public ResponseEntity<String> generarYEnviarComprobante(@PathVariable int idReserva) {
             try {
+                reservasService.actualizarEstado(idReserva,"pagado");
                 byte[] archivo = reservasService.generarComprobantePDFDesdeExcel(idReserva);
                 reservasService.enviarComprobanteCorreoCliente(idReserva, archivo);
                 return ResponseEntity.ok("Comprobante PDF enviado exitosamente.");
